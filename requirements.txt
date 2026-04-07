@@ -6,7 +6,7 @@ pydantic==2.5.3
 pydantic-settings==2.1.0
 
 # Vector databases (choose one)
-pinecone-client==3.0.2
+pinecone-client==6.0.0
 qdrant-client==1.7.3
 weaviate-client==4.4.1
 pymilvus==2.3.5
