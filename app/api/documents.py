@@ -18,14 +18,15 @@ router = APIRouter(prefix="/documents", tags=["documents"])
 
 
 @router.post(
-    "/upload",
-    response_model=DocumentUploadResponse,
-    status_code=status.HTTP_201_CREATED,
-    summary="Upload and process a document",
-    description="Upload a PDF or TXT file, extract text, chunk it, generate embeddings, and store in vector database"
+        "/upload",
+        response_model=DocumentUploadResponse,
+        status_code=status.HTTP_201_CREATED,
+        summary="Upload and process a document",
+        description="Upload a PDF or TXT file, extract text, chunk it, generate embeddings, and store in vector database"
 )
+
 async def upload_document(
-    file: UploadFile = File(..., description="PDF or TXT file to upload"),
+    file: UploadFile = File(..., description="PDF or TXT file to upload"), ##... means required = true
     chunking_strategy: Literal["fixed_size", "semantic"] = Form(
         default="fixed_size",
         description="Chunking strategy to use"
