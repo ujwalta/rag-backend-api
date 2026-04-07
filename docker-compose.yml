@@ -31,7 +31,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # PostgreSQL Database (optional, for production use)
+  # PostgreSQL Database (optional)
   postgres:
     image: postgres:15-alpine
     environment:
@@ -44,6 +44,33 @@ services:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U rag_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Your FastAPI App
+  app:
+    build: .
+    depends_on:
+      qdrant:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    environment:
+      PORT: 8000
+      VECTOR_DB_TYPE: qdrant
+      QDRANT_HOST: http://qdrant:6333
+      QDRANT_API_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIiwic3ViamVjdCI6ImFwaS1rZXk6MzYwZDY5YzctOGIyNy00Yjc0LTlhNDUtZmJlMDI4ZWFhYmYxIn0.-loFg3XnNfpkFwqPRg7390hPIy6VlzX5vCOqMOD3FzM"   # Optional if using Qdrant Cloud
+      QDRANT_PORT: 443
+      SIMILARITY_THRESHOLD: 0.7
+      TOP_K_RESULTS: 5
+      MAX_FILE_SIZE_MB: 10
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
